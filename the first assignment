@@ -1,0 +1,859 @@
+问题 A: 实验11_4_初识链表
+时间限制 : 1.000 sec  内存限制 : 128 MB
+
+题目描述
+已知一个正整数序列，个数未知，但至少有一个元素，你的任务是建立一个单链表，并使用该链表存储这个正整数序列，然后统计这个序列中元素的最大值与最小值，计算序列全部元素之和。正整数的输入用-1作为结束标志，注意-1不算这个正整数序列中的元素（不要统计-1）。
+输入
+一个正整数序列，正整数序列元素的个数未知，但以输入“-1”结束，输入“-1”前至少输入一个正整数。序列中的元素范围在1—999999999之间。
+输出
+三个正整数，即最大值、最小值、所有元素之和。
+数据最多的测试用例节点数在1000这个数量级，所有整数可以用int型存储。
+请注意输入输出格式。
+
+样例输入 Copy
+1 4 99 21 50 61 32 4 -1
+样例输出 Copy
+The maximum,minmum and the total are:99 1 272
+
+///
+#include<stdlib.h>
+#include<stdio.h>
+struct Node{
+    int data;
+    struct Node* next;
+};
+struct Node* addNode(struct Node* head){
+    int x;
+    while(scanf("%d",&x) && x != -1){
+        struct Node* curr = malloc(sizeof(struct Node));
+        if(head == NULL){
+            curr->data = x;
+            curr->next = NULL;
+            head = curr;
+        }else{
+            curr->data = x;
+            curr->next = head;
+            head = curr;
+        }
+    }
+    return head;
+}
+int findMax(struct Node* head){
+    struct Node* curr = head;
+    int max = -1;
+    while(curr){
+        if(max < curr->data) max = curr->data;
+        curr = curr->next;
+    }
+    return max;
+}
+int findMin(struct Node* head){
+    struct Node* curr = head;
+    int min = head->data;
+    while(curr){
+        if( min > curr->data) min = curr->data;
+        curr = curr->next;
+    }
+    return min;
+}
+int addAll(struct Node* head){
+    struct Node* curr = head;
+    int sum = 0;
+    while(curr){
+        sum += curr->data;
+        curr = curr->next;
+    }
+    return sum;
+}
+void deleteNode(struct Node* head){
+    while(head){
+        struct Node* curr = head;
+        head = head->next;
+        free(curr);
+    }
+}
+int main(){
+    struct Node* head = NULL;
+    head = addNode(head);
+    printf("The maximum,minmum and the total are:%d %d %d",findMax(head),findMin(head),addAll(head));
+    deleteNode(head);
+    return 0;
+}
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+问题 B: 实验11_10_链表排序
+时间限制 : 1.000 sec  内存限制 : 128 MB
+
+题目描述
+已知一个正整数组成的无序序列，个数未知，但至少有一个元素，你的任务是建立一个单链表，并使用该链表存储这个正整数序列，然后将这个链表进行排序，使得排序后的链表为递增序列。正整数的输入用-1作为结束标志，注意-1不算这个正整数序列中的元素（不要统计-1）。在排序的过程中，你可以自己选择排序算法（冒泡排序、选择排序等），但必须是通过修改结点的指针域来进行排序，而不是对结点的数据域进行修改。程序结束后要释放所有节点占据的空间。
+输入
+一个元素个数未知的正整数序列，以输入“-1”结束，输入“-1”前至少输入一个正整数。
+输出
+经过排序后的链表，每个元素后有一个空格，注意最后一个元素后只有换行符。
+数据最多的测试用例节点数在1000这个数量级，所有整数可以用int型存储。
+请注意输入输出格式。
+样例输入 Copy
+49 38 65 97 76 13 27 49 -1
+样例输出 Copy
+The new list is:13 27 38 49 49 65 76 97
+
+
+example:
+
+#include<stdio.h>
+#include<stdlib.h>
+struct node
+{
+    int data;
+    struct node *next;
+};
+typedef struct node NODE;
+NODE * createNode();
+void freeList(NODE * head);
+void bubbleSort(NODE * head);
+int cnt;
+int main()
+{
+    NODE *head=createNode();
+    NODE *temp = head;
+    printf("The new list is:");
+    if (cnt == 1)
+        printf("%d\n", head->next->data);
+    else
+    {
+        bubbleSort(head);
+        head = head->next;
+        while (head->next != NULL)
+        {
+            printf("%d ", head->data);
+            head = head->next;
+            if (head->next == NULL)
+            {
+                printf("%d\n", head->data);
+                break;
+            }
+        }
+    }
+ 
+    freeList(temp);
+    temp = NULL;
+    return 0;
+}
+NODE * createNode()
+{
+    int num;
+    NODE * current = NULL;
+    NODE * last = NULL;
+    NODE * head = NULL;
+    head = malloc(sizeof(NODE));
+    head->data = 0;
+    head->next = NULL;
+    last = head;
+    scanf("%d", &num);
+    while (num != -1)
+    {
+        cnt++;
+        current = malloc(sizeof(NODE));
+        if (current != NULL)
+        {
+            current->data = num;
+            last->next = current;
+            current->next = NULL;
+            last = current;
+        }
+        scanf("%d", &num);
+    }
+    last->next = NULL;
+    return head;
+}
+ 
+void freeList(NODE * head)
+{
+    NODE * temp;
+    while (head != NULL)
+    {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+ 
+void bubbleSort(NODE * head)
+{
+    NODE * pre,* p,* tail;
+    tail = NULL;
+    while (head->next != tail)
+    {
+        pre = head;
+        p = head->next;
+        while (p->next != tail)
+        {
+            if (p->data > p->next->data)
+            {
+                pre->next = p->next;
+                p->next = pre->next->next;
+                pre->next->next = p;
+            }
+            else
+                p = p->next;
+            pre = pre->next;
+        }
+        tail = p;
+    }
+}
+
+
+--------------------------------------------------------------------
+问题 C: 实验11_11_链表匹配
+时间限制 : 1.000 sec  内存限制 : 128 MB
+
+题目描述
+已知两个由正整数组成的无序序列A、B，每个序列的元素个数未知，但至少有一个元素。你的任务是判断序列B是否是序列A的连续子序列。假设B是“1 9 2 4 18”，A是“33 64 1 9 2 4 18 7”，B是A的连续子序列；假设B是“1 9 2 4 18”，A是“33 1 9 64 2 4 18 7”，B不是A的连续子序列。
+要求：
+建立两个单链表A、B用于存储两个正整数序列，然后按照题目的要求，判断链表B是否是链表A的连续子序列。正整数的输入用-1作为结束标志，注意-1不算这个正整数序列中的元素（不要统计-1）。在程序结束前要释放链表A、B中的所有节点。
+输入
+依次输入两个乱序的正整数序列A、B，序列中元素个数未知，但每个序列至少有一个元素，并以输入“-1”结束，每个序列占一行。
+注意：样例中给的是两个样例，实际的输入只有两行。
+输出
+如果序列B是序列A的连续子序列，则输出“ListB is the sub sequence of ListA.”，否则输出“ListB is not the sub sequence of ListA.”。
+数据最多的测试用例节点数在100这个数量级，所有整数可以用int型存储。
+请注意输入输出格式。
+样例输入 Copy
+Sample 1:
+5 4 3 2 1 -1
+3 2 1 -1
+
+Sample 2:
+1 2 3 4 5 6 7 8 9 -1
+1 2 3 4 5 6 7 8 0 -1
+样例输出 Copy
+Sample 1:
+ListB is the sub sequence of ListA.
+
+Sample 2:
+ListB is not the sub sequence of ListA.
+
+
+
+example:
+#include "stdio.h"
+#include "stdlib.h"
+typedef struct Node node;
+ 
+ 
+struct Node{
+    int data;
+    node* next;
+};
+ 
+void addNode (node** head);
+void cmpList(node* head1,node* head2);
+void deleteList(node** head);
+ 
+int main(){
+    node* head1 = NULL;
+    node* head2 = NULL;
+    addNode(&head1);
+    addNode(&head2);
+    cmpList(head1,head2);
+    deleteList(&head1);
+    deleteList(&head2);
+    return 0;
+}
+ 
+void addNode(node** head){
+    int x;
+    while(scanf("%d",&x) && x != -1){
+        node* temp = malloc(sizeof(node));
+        temp->data = x;
+        temp->next = NULL;
+        if(*head == NULL){
+            *head = temp;
+        }else {
+            temp->next = *head;
+            *head = temp;
+        }
+    }
+}
+ 
+void cmpList(node* head1, node* head2) {
+    node* curr1 = head1;
+ 
+    while (curr1) {
+        node* temp1 = curr1;
+        node* temp2 = head2;
+ 
+        while (temp1 && temp2 && temp1->data == temp2->data) {
+            temp1 = temp1->next;
+            temp2 = temp2->next;
+        }
+ 
+        if (!temp2) { // 说明 head2 遍历完了，即 head2 是 head1 的子序列
+            printf("ListB is the sub sequence of ListA.\n");
+            return;
+        }
+ 
+        curr1 = curr1->next;
+    }
+ 
+    printf("ListB is not the sub sequence of ListA.\n");
+}
+ 
+void deleteList(node** head){
+    node* temp = *head;
+    while(temp){
+        node* cu = temp;
+        temp = temp->next;
+        free(cu);
+    }
+    *head = NULL;
+}
+
+
+---------------------------------------------------------------
+问题 D: 实验11_13_链表交换
+
+时间限制 : 1.000 sec  内存限制 : 128 MB
+
+题目描述
+已知一个正整数序列，序列元素个数未知，但至少有两个元素，你的任务是建立一个单链表用于存储这个正整数序列。然后实现交换此链表中任意指定的两段，第一段为[s1,t1]，第二段[s2,t2]。s1、t1、s2、t2代表链表的第几个节点，且满足s1<=t1，s2<=t2，t1<s2，s2一定小于等于链表节点的总个数。正整数的输入用-1作为结束标志，注意-1不算这个正整数序列中的元素（不要统计-1）。最后将链表的全部节点释放。
+输入
+输入一个正整数序列，以输入“-1”结束，序列中元素个数未知，但输入“-1”前至少输入两个正整数。然后是四个整数，即为s1、t1、s2、t2。
+输出
+经过处理后的新链表，每个元素后有一个空格，注意最后一个元素后只有换行符。
+数据最多的测试用例节点数在100这个数量级，所有整数可以用int型存储。
+请注意输入输出格式。
+样例输入 Copy
+1 2 3 4 5 6 7 8 9 10 -1
+1 1 4 7
+样例输出 Copy
+The new list is:4 5 6 7 2 3 1 8 9 10
+
+
+example:
+
+#include<stdio.h>
+#include <stdlib.h>
+ 
+struct node {
+    int data;
+    int *nextPtr;
+};
+ 
+struct node *creatLinkedList(struct node *headPtr);
+ 
+void delLinkedList(struct node *headPtr);
+ 
+void changeLinkedList(int s1, int t1, int s2, int t2, struct node *headPtr);
+ 
+struct node *getLocation(struct node *headPtr, int num);
+ 
+void printList(struct node *headPtr);
+ 
+int main() {
+    struct node *headPtr = NULL;
+    int s1, t1, s2, t2;
+    headPtr = creatLinkedList(headPtr);
+    scanf("%d%d%d%d", &s1, &t1, &s2, &t2);
+    changeLinkedList(s1, t1, s2, t2, headPtr);
+    printList(headPtr);
+    delLinkedList(headPtr);
+    return 0;
+}
+ 
+struct node *creatLinkedList(struct node *headPtr) {
+    struct node *newPtr, *currentPtr;
+    int num;
+    newPtr = malloc(sizeof(struct node));
+    newPtr->nextPtr = NULL;
+    headPtr = newPtr;
+    scanf("%d", &num);
+    while (num != -1) {
+        newPtr = malloc(sizeof(struct node));
+        newPtr->data = num;
+        newPtr->nextPtr = NULL;
+        if (headPtr->nextPtr == NULL) {
+            currentPtr = newPtr;
+            headPtr->nextPtr = currentPtr;
+        } else {
+            currentPtr->nextPtr = newPtr;
+            currentPtr = newPtr;
+        }
+        scanf("%d", &num);
+    }
+    return headPtr;
+}
+ 
+void delLinkedList(struct node *headPtr) {
+    struct node *thisPtr, *thatPtr;
+    thisPtr = headPtr;
+    while (thisPtr != NULL) {
+        thatPtr = thisPtr->nextPtr;
+        free(thisPtr);
+        thisPtr = thatPtr;
+    }
+}
+ 
+void changeLinkedList(int s1, int t1, int s2, int t2, struct node *headPtr) {
+    struct node *s1Ptr, *t1Ptr, *s2Ptr, *t2Ptr, *preS1Ptr, *preS2Ptr, *afterT1Ptr, *afterT2Ptr;
+    preS1Ptr = getLocation(headPtr, s1 - 1);
+    preS2Ptr = getLocation(headPtr, s2 - 1);
+    s1Ptr = preS1Ptr->nextPtr;
+    t1Ptr = getLocation(headPtr, t1);
+    s2Ptr = preS2Ptr->nextPtr;
+    t2Ptr = getLocation(headPtr, t2);
+    afterT1Ptr = t1Ptr->nextPtr;
+    afterT2Ptr = t2Ptr->nextPtr;
+    if (s2!=t1+1){
+        t1Ptr->nextPtr = afterT2Ptr;
+        preS2Ptr->nextPtr = s1Ptr;
+        t2Ptr->nextPtr = afterT1Ptr;
+        preS1Ptr->nextPtr = s2Ptr;
+    } else{
+        t1Ptr->nextPtr = afterT2Ptr;
+        t2Ptr->nextPtr = s1Ptr;
+        preS1Ptr->nextPtr = s2Ptr;
+    }
+ 
+}
+ 
+struct node *getLocation(struct node *headPtr, int num) {
+    struct node *thisPtr;
+    thisPtr = headPtr;
+    for (int i = 1; i <= num; i++) {
+        thisPtr = thisPtr->nextPtr;
+    }
+    return thisPtr;
+}
+ 
+void printList(struct node *headPtr) {
+    struct node *thisPtr;
+    thisPtr = headPtr->nextPtr;
+    printf("The new list is:");
+    while (thisPtr != NULL) {
+        if (thisPtr->nextPtr != NULL) {
+            printf("%d ", thisPtr->data);
+        } else if (thisPtr->nextPtr == NULL) {
+            printf("%d\n", thisPtr->data);
+        }
+        thisPtr = thisPtr->nextPtr;
+    }
+}
+
+
+----------------------------------------------
+问题 E: 实验11_9_链表归并
+
+时间限制 : 1.000 sec  内存限制 : 128 MB
+
+题目描述
+已知有两个递增的正整数序列A和B，序列中元素个数未知，同一序列中不会有重复元素出现，有可能某个序列为空。现要求将序列B归并到序列A中，且归并后序列A的数据仍然按递增顺序排列。如果序列B中某些数据在序列A中也存在，则这些数据所在节点仍然留在序列B中，而不被归并到序列A中；否则这些数据所在节点将从序列B中删除，添加到序列A中。
+要求：
+建立两个单链表A、B用于存储两个正整数序列，然后按照题目的要求，将链表B中的元素归并到链表A中。在归并的过程中，不要释放B中的节点空间、然后建立新节点，而要改变指针的指向，使元素从B中删除并添加到A中。正整数序列按照递增顺序输入，用-1作为结束标志，注意-1不算这个正整数序列中的元素（不要统计-1）。在程序结束前要释放链表A、B中的所有节点。
+输入
+依次输入两个递增的正整数序列A和B，序列元素的个数未知，但以输入“-1”结束，每个正整数序列占一行。
+输出
+处理后的链表A中的元素，占一行；然后是处理后的链表B中的元素，占一行。每行的每个元素后有一个空格，注意最后一个元素后只有换行符，如果某个链表为空则，则输出“There is no item in X list.”
+数据最多的测试用例节点数在100这个数量级，所有整数可以用int型存储。
+请注意输入输出格式。
+样例输入 Copy
+Sample 1:
+1 3 4 5 6 7 -1
+2 3 6 8 9 10 11-1
+
+Sample 2:
+-1
+-1
+样例输出 Copy
+Sample 1:
+The new list A:1 2 3 4 5 6 7 8 9 10 11
+The new list B:3 6
+
+Sample 2:
+There is no item in A list.
+There is no item in B list.
+
+
+
+example:
+
+  #include<stdlib.h>
+#include<stdio.h>
+ 
+typedef struct Node node;
+ 
+struct Node{
+    int data;
+    node* next;
+};
+ 
+void addNode(node** head);
+void deleteList(node** head);
+void sortList(node** head);
+void addBtoA(node** headA,node** headB);
+int BexistA(int element,node* headA);
+void printList(node* headA,node* headB);
+ 
+int main(){
+    node* headA = NULL;
+    node* headB = NULL;
+    addNode(&headA);
+    addNode(&headB);
+    addBtoA(&headA,&headB);
+    sortList(&headA);
+    sortList(&headB);
+    printList(headA, headB);
+    deleteList(&headA);
+    deleteList(&headB);
+    return 0;
+}
+ 
+void addNode(node** head){
+    int x;
+    while(scanf("%d",&x) && x!= -1){
+        node* temp = malloc(sizeof(node));
+        temp->data = x;
+        temp->next = NULL;
+        if(*head == NULL){
+            *head = temp;
+        }else {
+            temp->next = *head;
+            *head = temp;
+        }
+    }
+}
+ 
+void deleteList(node** head){
+    node* curr = *head;
+    while( curr ){
+        node* temp = curr;
+        curr = curr->next;
+        free(temp);
+    }
+}
+ 
+void sortList(node ** head)
+{
+    node * pre,* p,* tail;
+    tail = NULL;
+    node* f = malloc(sizeof(node));
+    f->data = -1;
+    f->next = *head;
+    while (f->next != tail)
+    {
+        pre = f;
+        p = f->next;
+        while (p->next != tail)
+        {
+            if (p->data > p->next->data)
+            {
+                pre->next = p->next;
+                p->next = pre->next->next;
+                pre->next->next = p;
+            }
+            else
+                p = p->next;
+            pre = pre->next;
+        }
+        tail = p;
+    }
+    *head = f->next;
+    free(f);
+}
+ 
+int BexistA(int element,node* headA){
+    node* temp = headA;
+    while(temp){
+        if(temp->data == element) return 1;
+        temp = temp->next;
+    }
+    return 0;
+}
+ 
+void addBtoA(node** headA,node** headB){
+    node* pre = NULL;
+    node* curr = *headB;
+    while( curr ){
+        node* next = curr->next;
+        if(!BexistA(curr->data,*headA)){
+            if(pre) {
+                pre->next = curr->next;
+            } else {
+                *headB = curr->next;
+            }
+            curr->next = *headA;
+            *headA = curr;
+        } else {
+            pre = curr;
+        }
+ 
+        curr = next;
+    }
+}
+ 
+void printList(node* headA,node* headB){
+    if(!headA){
+        printf("There is no item in A list.\n");
+    } else {
+        node* curr = headA;
+        printf("The new list A:");
+        while ( curr ){
+            printf("%d",curr->data);
+            curr = curr->next;
+            if( curr ) {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+    if(!headB){
+        printf("There is no item in B list.\n");
+    } else {
+        node* curr = headB;
+        printf("The new list B:");
+        while ( curr ){
+            printf("%d",curr->data);
+            curr = curr->next;
+            if( curr ) {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+
+
+----------------------------------------------------
+问题 F: 实验11_15_拆分链表
+时间限制 : 1.000 sec  内存限制 : 128 MB
+
+题目描述
+已知有一个乱序的字符序列L，序列中的字符可能是英文字母、数字字符或其它字符，字符的个数未知，每个字符之间用空格分开。字符序列用“-1”作为输入结束标志，这里你要把-1当做一个字符串对待，并且不算作字符序列中的元素。如下即为一个合法的字符序列：“a c 3 b a d 6 , & j m 8 7 2 V -1”。你的任务是将这个字符序列拆分为三个独立的序列A、B和C，其中序列A存放序列L中的字母，序列B存放序列L中的数字，序列C存放序列L中的其他字符，然后，将序列A、B和C分别按照ASCII码的大小关系进行升序排序。最终序列L将变为空序列。
+要求：
+建立四个单链表，分别存储序列L、A、B、C中的元素。字符序列的输入用“-1”作为结束标志。建立链表L时，建议使用scanf(“%s”,s);来读取字符序列中的字符，即把单独的字符看做一个字符串读取。当L建立后，你要按照问题描述中所述，将L拆分为A、B、C三个链表，然后对每个链表都进行排序，这部分的操作都应该是对指针进行修改，而不是删除节点与建立新节点。在程序结束前要释放链表A、B、C中的所有节点。
+输入
+一个乱序的字符序列，序列元素的个数未知，以输入“-1”结束，输入“-1”前可能没有其它元素，每个字符序列占一行。
+输出
+链表A中的元素，占一行；然后是链表B中的元素，占一行。最后是链表C中的元素，占一行。每行的每个元素后有一个空格，注意最后一个元素后只有换行符，如果某个链表为空则，则输出“There is no item in X list.”
+数据最多的测试用例节点数在100这个数量级。
+请注意输入输出格式。
+样例输入 Copy
+Sample 1:
+a c 3 b a d 6 , & j m 8 7 2 V -1
+
+Sample 2:
+z m v 1 a K 2 m p 9 a 0 a d -1
+样例输出 Copy
+Sample 1:
+The list A is: V a a b c d j m
+The list B is: 2 3 6 7 8
+The list C is: & ,
+
+Sample 2:
+The list A is: K a a a d m m p v z
+The list B is: 0 1 2 9
+There is no item in C list.
+
+
+example:
+
+#include<stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ 
+struct node {
+    char data[3];
+    int *nextPtr;
+};
+ 
+struct node *creatLinkedList(struct node *headPtr);
+ 
+struct node *creatNullLinkedList(struct node *headPtr);
+ 
+void delLinkedList(struct node *headPtr);
+ 
+void add_L_tO_ABC(struct node *headPtrL, struct node *headPtrA, struct node *headPtrB, struct node *headPtrC);
+ 
+void ifSortAndSort(struct node *headPtrA, struct node *headPtrB, struct node *headPtrC);
+ 
+void sortLinkedList(struct node *headPtr);
+ 
+int getNodeNum(struct node *headPtr);
+ 
+void printABC(struct node *headPtrA, struct node *headPtrB, struct node *headPtrC);
+ 
+void printList(struct node *headPtr);
+ 
+int main() {
+    struct node *headPtrL = NULL, *headPtrA = NULL, *headPtrB = NULL, *headPtrC = NULL;
+    headPtrL = creatLinkedList(headPtrL);
+    headPtrA = creatNullLinkedList(headPtrA);
+    headPtrB = creatNullLinkedList(headPtrB);
+    headPtrC = creatNullLinkedList(headPtrC);
+    add_L_tO_ABC(headPtrL, headPtrA, headPtrB, headPtrC);
+    ifSortAndSort(headPtrA, headPtrB, headPtrC);
+    printABC(headPtrA, headPtrB, headPtrC);
+    delLinkedList(headPtrL);
+    delLinkedList(headPtrA);
+    delLinkedList(headPtrB);
+    delLinkedList(headPtrC);
+    return 0;
+}
+ 
+struct node *creatLinkedList(struct node *headPtr) {
+    struct node *newPtr, *currentPtr;
+    char num[3];
+    newPtr = malloc(sizeof(struct node));
+    newPtr->nextPtr = NULL;
+    headPtr = newPtr;
+    scanf("%s", num);
+    while (num[0] != '-' || num[1] != '1') {
+        newPtr = malloc(sizeof(struct node));
+        strcpy(newPtr->data, num);
+        newPtr->nextPtr = NULL;
+        if (headPtr->nextPtr == NULL) {
+            currentPtr = newPtr;
+            headPtr->nextPtr = currentPtr;
+        } else {
+            currentPtr->nextPtr = newPtr;
+            currentPtr = newPtr;
+        }
+        scanf("%s", num);
+    }
+    return headPtr;
+}
+ 
+struct node *creatNullLinkedList(struct node *headPtr) {
+    struct node *newPtr;
+    newPtr = malloc(sizeof(struct node));
+    newPtr->nextPtr = NULL;
+    headPtr = newPtr;
+    return headPtr;
+}
+ 
+void delLinkedList(struct node *headPtr) {
+    struct node *thisPtr, *thatPtr;
+    thisPtr = headPtr;
+    while (thisPtr != NULL) {
+        thatPtr = thisPtr->nextPtr;
+        free(thisPtr);
+        thisPtr = thatPtr;
+    }
+}
+ 
+void add_L_tO_ABC(struct node *headPtrL, struct node *headPtrA, struct node *headPtrB, struct node *headPtrC) {
+    struct node *thisPtrL, *thisPtrA, *thisPtrB, *thisPtrC;
+    thisPtrL = headPtrL->nextPtr;
+    thisPtrA = headPtrA;
+    thisPtrB = headPtrB;
+    thisPtrC = headPtrC;
+    while (thisPtrL != NULL) {
+        if ((thisPtrL->data[0] >= 'a' && thisPtrL->data[0] <= 'z') ||
+            (thisPtrL->data[0] >= 'A' && thisPtrL->data[0] <= 'Z')) {
+            headPtrL->nextPtr = thisPtrL->nextPtr;
+            thisPtrA->nextPtr = thisPtrL;
+            thisPtrA = thisPtrA->nextPtr;
+            thisPtrA->nextPtr = NULL;
+            thisPtrL = headPtrL->nextPtr;
+            continue;
+        } else if (thisPtrL->data[0] >= '0' && thisPtrL->data[0] <= '9') {
+            headPtrL->nextPtr = thisPtrL->nextPtr;
+            thisPtrB->nextPtr = thisPtrL;
+            thisPtrB = thisPtrB->nextPtr;
+            thisPtrB->nextPtr = NULL;
+            thisPtrL = headPtrL->nextPtr;
+            continue;
+        } else {
+            headPtrL->nextPtr = thisPtrL->nextPtr;
+            thisPtrC->nextPtr = thisPtrL;
+            thisPtrC = thisPtrC->nextPtr;
+            thisPtrC->nextPtr = NULL;
+            thisPtrL = headPtrL->nextPtr;
+            continue;
+        }
+    }
+}
+ 
+void sortLinkedList(struct node *headPtr) {
+    struct node *thisPtr, *thatPtr, *lastPtr;
+    int nodeNum, flag;
+    nodeNum = getNodeNum(headPtr);
+    for (int i = 1; i <= nodeNum - 2; i++) {
+        lastPtr = headPtr;
+        thisPtr = lastPtr->nextPtr;
+        thatPtr = thisPtr->nextPtr;
+        for (int j = 1; j <= nodeNum - 2; j++) {
+            if (thisPtr->data[0] > thatPtr->data[0]) {
+                thisPtr->nextPtr = thatPtr->nextPtr;
+                thatPtr->nextPtr = thisPtr;
+                lastPtr->nextPtr = thatPtr;
+            }
+            lastPtr = lastPtr->nextPtr;
+            thisPtr = lastPtr->nextPtr;
+            thatPtr = thisPtr->nextPtr;
+        }
+    }
+}
+ 
+int getNodeNum(struct node *headPtr) {
+    int num = 0;
+    struct node *thisPtr;
+    thisPtr = headPtr;
+    while (thisPtr != NULL) {
+        thisPtr = thisPtr->nextPtr;
+        num++;
+    }
+    return num;
+}
+ 
+void ifSortAndSort(struct node *headPtrA, struct node *headPtrB, struct node *headPtrC) {
+    if (headPtrA->nextPtr != NULL) {
+        sortLinkedList(headPtrA);
+    }
+    if (headPtrB->nextPtr != NULL) {
+        sortLinkedList(headPtrB);
+    }
+    if (headPtrC->nextPtr != NULL) {
+        sortLinkedList(headPtrC);
+    }
+}
+ 
+void printABC(struct node *headPtrA, struct node *headPtrB, struct node *headPtrC) {
+    if (headPtrA->nextPtr == NULL) {
+        printf("There is no item in A list.\n");
+    } else {
+        printf("The list A is: ");
+        printList(headPtrA);
+    }
+    if (headPtrB->nextPtr == NULL) {
+        printf("There is no item in B list.\n");
+    } else {
+        printf("The list B is: ");
+        printList(headPtrB);
+    }
+    if (headPtrC->nextPtr == NULL) {
+        printf("There is no item in C list.\n");
+    } else {
+        printf("The list C is: ");
+        printList(headPtrC);
+    }
+}
+ 
+void printList(struct node *headPtr) {
+    struct node *thisPtr;
+    thisPtr = headPtr->nextPtr;
+    while (thisPtr != NULL) {
+        if (thisPtr->nextPtr != NULL) {
+            printf("%c ", thisPtr->data[0]);
+        } else if (thisPtr->nextPtr == NULL) {
+            printf("%c\n", thisPtr->data[0]);
+        }
+        thisPtr = thisPtr->nextPtr;
+    }
+}
+
+
+-------------------------------------------------------
